@@ -1,4 +1,4 @@
-# Web3Auth x React Demo Application
+# Web3Auth MPC x React Demo Application
 
 ## Questions
 
