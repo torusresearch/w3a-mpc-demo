@@ -195,9 +195,9 @@ function App() {
 					if (!getTSSData) {
 						throw new Error("tssShare and signatures are not defined");
 					}
-					if (!provider) {
-						throw new Error("not initialized");
-					}
+					// if (!provider) {
+					// 	throw new Error("not initialized");
+					// }
 					const { aggregateVerifier: verifierName, verifierId } =
 						await web3auth.getUserInfo();
 					if (!verifierName || !verifierId) {
