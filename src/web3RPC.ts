@@ -58,7 +58,6 @@ export default class EthereumRpc {
 
 			// Get user's Ethereum public address
 			const fromAddress = (await web3.eth.getAccounts())[0];
-
 			const destination = fromAddress;
 
 			const amount = web3.utils.toWei("0.001"); // Convert 1 ether to wei
@@ -70,6 +69,7 @@ export default class EthereumRpc {
 				value: amount,
 				maxPriorityFeePerGas: "5000000000", // Max priority fee per gas
 				maxFeePerGas: "6000000000000", // Max fee per gas
+				chainId: 80001,
 			});
 
 			return receipt;
