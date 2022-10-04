@@ -310,6 +310,16 @@ function App() {
 		uiConsole(balance);
 	};
 
+	const signTransaction = async () => {
+		if (!provider) {
+			uiConsole("provider not initialized yet");
+			return;
+		}
+		const rpc = new RPC(provider);
+		const receipt = await rpc.signTransaction();
+		uiConsole(receipt);
+	};
+
 	const sendTransaction = async () => {
 		if (!provider) {
 			uiConsole("provider not initialized yet");
@@ -513,6 +523,11 @@ function App() {
 				<div>
 					<button onClick={signMessage} className="card">
 						Sign Message
+					</button>
+				</div>
+				<div>
+					<button onClick={signTransaction} className="card">
+						Sign Transaction
 					</button>
 				</div>
 				<div>

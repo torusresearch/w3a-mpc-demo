@@ -52,6 +52,28 @@ export default class EthereumRpc {
 		}
 	}
 
+	async signTransaction(): Promise<any> {
+		try {
+			const web3 = new Web3(this.provider as any);
+
+			// Get user's Ethereum public address
+			const fromAddress = (await web3.eth.getAccounts())[0];
+			const destination = fromAddress;
+
+			const amount = web3.utils.toWei("0.001"); // Convert 1 ether to wei
+
+			const receipt = await web3.eth.signTransaction({
+				from: fromAddress,
+				to: destination,
+				value: amount,
+			});
+
+			return receipt;
+		} catch (error) {
+			return error as string;
+		}
+	}
+
 	async sendTransaction(): Promise<any> {
 		try {
 			const web3 = new Web3(this.provider as any);
