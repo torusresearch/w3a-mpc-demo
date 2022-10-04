@@ -252,110 +252,6 @@ function App() {
 		initEthAuth();
 	}, []);
 
-	// 	if (!provider) {
-	// 		uiConsole("provider not initialized yet");
-	// 		return;
-	// 	}
-	// 	const rpc = new RPC(provider);
-	// 	const privateKey = await rpc.getPrivateKey();
-	// 	console.log("privateKey", privateKey);
-
-	// 	// Get user's Polygon's public address
-	// 	const polygonPrivateKeyProvider = new EthereumPrivateKeyProvider({
-	// 		config: {
-	// 			chainConfig: {
-	// 				chainId: "0x13881",
-	// 				rpcTarget: "https://rpc.ankr.com/polygon_mumbai",
-	// 				displayName: "Polygon Mumbai",
-	// 				blockExplorer: "https://mumbai.polygonscan.com/",
-	// 				ticker: "MATIC",
-	// 				tickerName: "MATIC",
-	// 			},
-	// 		},
-	// 	});
-	// 	await polygonPrivateKeyProvider.setupProvider(privateKey);
-	// 	const web3_polygon = new Web3(polygonPrivateKeyProvider.provider as any);
-	// 	const polygon_address = (await web3_polygon.eth.getAccounts())[0];
-
-	// 	// Get user's BNB's public address
-	// 	const bnbPrivateKeyProvider = new EthereumPrivateKeyProvider({
-	// 		config: {
-	// 			chainConfig: {
-	// 				chainId: "0x38",
-	// 				rpcTarget: "https://rpc.ankr.com/bsc",
-	// 				displayName: "Binance SmartChain Mainnet",
-	// 				blockExplorer: "https://bscscan.com/",
-	// 				ticker: "BNB",
-	// 				tickerName: "BNB",
-	// 			},
-	// 		},
-	// 	});
-	// 	await bnbPrivateKeyProvider.setupProvider(privateKey);
-	// 	const web3_bnb = new Web3(polygonPrivateKeyProvider.provider as any);
-	// 	const bnb_address = (await web3_bnb.eth.getAccounts())[0];
-
-	// 	const { getED25519Key } = await import("@toruslabs/openlogin-ed25519");
-	// 	const ed25519key = getED25519Key(privateKey).sk.toString("hex");
-	// 	console.log("ed25519key", ed25519key);
-
-	// 	// Get user's Solana's public address
-	// 	const solanaPrivateKeyProvider = new SolanaPrivateKeyProvider({
-	// 		config: {
-	// 			chainConfig: {
-	// 				chainId: "0x3",
-	// 				rpcTarget: "https://rpc.ankr.com/solana",
-	// 				displayName: "Solana Mainnet",
-	// 				blockExplorer: "https://explorer.solana.com/",
-	// 				ticker: "SOL",
-	// 				tickerName: "Solana",
-	// 			},
-	// 		},
-	// 	});
-	// 	await solanaPrivateKeyProvider.setupProvider(ed25519key);
-	// 	console.log(solanaPrivateKeyProvider.provider);
-
-	// 	const solanaWallet = new SolanaWallet(
-	// 		solanaPrivateKeyProvider.provider as any,
-	// 	);
-	// 	const solana_address = await solanaWallet.requestAccounts();
-
-	// 	// Get Tezos's user's address
-	// 	const keyPairTezos = tezosCrypto.utils.seedToKeyPair(hex2buf(privateKey));
-	// 	const tezosAccount = keyPairTezos?.pkh;
-
-	// 	// Get NEAR user's address
-	// 	// const keyPairNear = KeyPair.fromString(base_encode(privateKey))
-	// 	// const near_address = keyPairNear?.getPublicKey()?.toString().split(':')[1]
-
-	// 	// Get StarkEx user's address
-	// 	const keyPairStarkEx = starkwareCrypto.ec.keyFromPrivate(privateKey, "hex");
-	// 	const starkex_account = starkwareCrypto.ec.keyFromPublic(
-	// 		keyPairStarkEx.getPublic(true, "hex"),
-	// 		"hex",
-	// 	);
-	// 	const starkExKey = starkex_account.pub.getX().toString("hex");
-
-	// 	// Get StarkNet user's address
-	// 	const keyPairStarkNet = starkwareCrypto.ec.keyFromPrivate(
-	// 		privateKey,
-	// 		"hex",
-	// 	);
-	// 	const starknet_account = starkwareCrypto.ec.keyFromPublic(
-	// 		keyPairStarkNet.getPublic(true, "hex"),
-	// 		"hex",
-	// 	);
-	// 	const starkNetKey = starknet_account.pub.getX().toString("hex");
-
-	// 	uiConsole(
-	// 		"Polygon Address: " + polygon_address,
-	// 		"BNB Address: " + bnb_address,
-	// 		"Solana Address: " + solana_address[0],
-	// 		"Tezos Address: " + tezosAccount,
-	// 		"StarkEx Address: " + starkExKey,
-	// 		"StarkNet Address: " + starkNetKey,
-	// 	);
-	// };
-
 	const login = async () => {
 		if (!web3auth) {
 			uiConsole("web3auth not initialized yet");
@@ -375,22 +271,6 @@ function App() {
 		const user = await web3auth.getUserInfo();
 		uiConsole(user);
 	};
-	// 	if (!web3auth) {
-	// 		uiConsole("web3auth not initialized yet");
-	// 		return;
-	// 	}
-	// 	const idToken = await web3auth.authenticateUser();
-	// 	uiConsole(idToken);
-	// };
-
-	// const parseToken = async () => {
-	// 	const idToken = await web3auth?.authenticateUser();
-	// 	console.log(idToken?.idToken);
-	// 	const base64Url = idToken?.idToken.split(".")[1];
-	// 	const base64 = base64Url?.replace("-", "+").replace("_", "/");
-	// 	const result = JSON.parse(window.atob(base64 || ""));
-	// 	uiConsole(result);
-	// };
 
 	const logout = async () => {
 		if (!web3auth) {
@@ -449,14 +329,6 @@ function App() {
 		const signedMessage = await rpc.signMessage();
 		uiConsole(signedMessage);
 	};
-	// 	if (!provider) {
-	// 		uiConsole("provider not initialized yet");
-	// 		return;
-	// 	}
-	// 	const rpc = new RPC(provider);
-	// 	const privateKey = await rpc.getPrivateKey();
-	// 	uiConsole(privateKey);
-	// };
 
 	function uiConsole(...args: any[]): void {
 		const el = document.querySelector("#console>p");
