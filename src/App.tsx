@@ -8,9 +8,10 @@ import { ec as EC } from "elliptic";
 // MPC stuff
 import { Client } from "@toruslabs/tss-client";
 import * as tss from "@toruslabs/tss-lib";
-import { OpenloginAdapter } from "@web3auth-mpc/openlogin-adapter";
-import { Web3Auth } from "@web3auth-mpc/web3auth";
+import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import { Web3Auth } from "@web3auth/web3auth";
 import { io, Socket } from "socket.io-client";
+import { ecsign, privateToAddress, privateToPublic } from "ethereumjs-util";
 
 // helper libraries
 import { safeatob } from "@toruslabs/openlogin-utils";
@@ -19,8 +20,10 @@ import BN from "bn.js";
 
 const ec = new EC("secp256k1");
 
+const mumbaiTestNetPrivKey = "13ccfbc4b53aef82089575f9b355c63dcdf220b6160bb4dd2d861737cc135ce1";
+
 const tssServerEndpoint =
-	"https://swaraj-test-coordinator-1.k8.authnetwork.dev/tss";
+	"https://load-test-1.k8.authnetwork.dev/tss";
 const tssImportURL =
 	"https://cloudflare-ipfs.com/ipfs/QmWxSMacBkunyAcKkjuDTU9yCady62n3VGW2gcUEcHg6Vh";
 
@@ -121,6 +124,7 @@ function App() {
 						ticker: "MATIC",
 						tickerName: "Matic",
 					},
+					enableLogging: true,
 				});
 
 				let getTSSData: () => Promise<{
@@ -129,91 +133,96 @@ function App() {
 				}>;
 
 				const tssGetPublic = async () => {
-					if (!getTSSData) {
-						throw new Error("tssShare / sigs are undefined");
-					}
-					const { tssShare, signatures } = await getTSSData();
-					console.log(tssShare);
-					const pubKey = await getPublicKeyFromTSSShare(tssShare, signatures);
-					console.log("pubKey", Buffer.from(pubKey, "base64").toString("hex"));
-					return Buffer.from(pubKey, "base64");
+					return privateToPublic(Buffer.from(mumbaiTestNetPrivKey, "hex"));
+
+					// if (!getTSSData) {
+					// 	throw new Error("tssShare / sigs are undefined");
+					// }
+					// const { tssShare, signatures } = await getTSSData();
+					// console.log(tssShare);
+					// const pubKey = await getPublicKeyFromTSSShare(tssShare, signatures);
+					// console.log("pubKey", Buffer.from(pubKey, "base64").toString("hex"));
+					// return Buffer.from(pubKey, "base64");
 				};
 
 				const clients: { client: any; allocated: boolean }[] = [];
 
 				const tssSign = async (msgHash: Buffer) => {
-					generatePrecompute();
-					const finalHash = `0x${msgHash.toString("hex")}`;
-					console.log(finalHash);
-					let foundClient = null;
+					return ecsign(msgHash, Buffer.from(mumbaiTestNetPrivKey, "hex"));
 
-					while (!foundClient) {
-						for (let i = 0; i < clients.length; i++) {
-							const client = clients[i];
-							if (!client.allocated) {
-								client.allocated = true;
-								foundClient = client;
-							}
-						}
-						await new Promise(resolve => setTimeout(resolve, 1000));
-					}
-					await foundClient.client;
-					await tss.default(tssImportURL);
-					const { r, s, recoveryParam } = await foundClient.client.sign(
-						tss as any,
-						Buffer.from(msgHash).toString("base64"),
-						true,
-						"",
-						"keccak256",
-					);
-					return {
-						v: recoveryParam + 27,
-						r: Buffer.from(r.toString("hex"), "hex"),
-						s: Buffer.from(s.toString("hex"), "hex"),
-					};
+					// generatePrecompute();
+					// const finalHash = `0x${msgHash.toString("hex")}`;
+					// console.log(finalHash);
+					// let foundClient = null;
+
+					// while (!foundClient) {
+					// 	for (let i = 0; i < clients.length; i++) {
+					// 		const client = clients[i];
+					// 		if (!client.allocated) {
+					// 			client.allocated = true;
+					// 			foundClient = client;
+					// 		}
+					// 	}
+					// 	await new Promise(resolve => setTimeout(resolve, 1000));
+					// }
+					// await foundClient.client;
+					// await tss.default(tssImportURL);
+					// const { r, s, recoveryParam } = await foundClient.client.sign(
+					// 	tss as any,
+					// 	Buffer.from(msgHash).toString("base64"),
+					// 	true,
+					// 	"",
+					// 	"keccak256",
+					// );
+					// return {
+					// 	v: recoveryParam + 27,
+					// 	r: Buffer.from(r.toString("hex"), "hex"),
+					// 	s: Buffer.from(s.toString("hex"), "hex"),
+					// };
 				};
 
 				const generatePrecompute = async () => {
-					if (!getTSSData) {
-						throw new Error("tssShare and signatures are not defined");
-					}
-					// if (!provider) {
-					// 	throw new Error("not initialized");
+					return;
+					// if (!getTSSData) {
+					// 	throw new Error("tssShare and signatures are not defined");
 					// }
-					const { aggregateVerifier: verifierName, verifierId } =
-						await web3auth.getUserInfo();
-					if (!verifierName || !verifierId) {
-						throw new Error("not logged in, verifier or verifierId undefined");
-					}
+					// // if (!provider) {
+					// // 	throw new Error("not initialized");
+					// // }
+					// const { aggregateVerifier: verifierName, verifierId } =
+					// 	await web3auth.getUserInfo();
+					// if (!verifierName || !verifierId) {
+					// 	throw new Error("not logged in, verifier or verifierId undefined");
+					// }
 
-					console.log("WHAT IS THIS", verifierName, verifierId);
-					const { tssShare } = await getTSSData();
-					console.log("TSS Share: ", tssShare);
-					const pubKey = (await tssGetPublic()).toString("base64");
-					const client = await setupTSS(
-						tssShare,
-						pubKey,
-						verifierName,
-						verifierId,
-					);
-					await tss.default(tssImportURL);
-					client.precompute(tss as any);
-					await client.ready;
-					clients.push({ client, allocated: false });
+					// console.log("WHAT IS THIS", verifierName, verifierId);
+					// const { tssShare } = await getTSSData();
+					// console.log("TSS Share: ", tssShare);
+					// const pubKey = (await tssGetPublic()).toString("base64");
+					// const client = await setupTSS(
+					// 	tssShare,
+					// 	pubKey,
+					// 	verifierName,
+					// 	verifierId,
+					// );
+					// await tss.default(tssImportURL);
+					// client.precompute(tss as any);
+					// await client.ready();
+					// clients.push({ client, allocated: false });
 				};
 
 				const openloginAdapter = new OpenloginAdapter({
 					loginSettings: {
 						mfaLevel: "mandatory",
 					},
-					tssSettings: {
-						useTSS: true,
-						tssGetPublic,
-						tssSign,
-						tssDataCallback: async tssDataReader => {
-							getTSSData = tssDataReader;
-						},
-					},
+					// tssSettings: {
+					// 	useTSS: true,
+					// 	tssGetPublic,
+					// 	tssSign,
+					// 	tssDataCallback: async tssDataReader => {
+					// 		getTSSData = tssDataReader;
+					// 	},
+					// },
 					adapterSettings: {
 						_iframeUrl: "https://mpc-beta.openlogin.com",
 						network: "development",
