@@ -1,4 +1,4 @@
-import type { SafeEventEmitterProvider } from "@web3auth/base";
+import type { SafeEventEmitterProvider } from "@web3auth-mpc/base";
 import Web3 from "web3";
 
 export default class EthereumRpc {
@@ -89,8 +89,6 @@ export default class EthereumRpc {
 				from: fromAddress,
 				to: destination,
 				value: amount,
-				maxPriorityFeePerGas: "5000000000", // Max priority fee per gas
-				maxFeePerGas: "6000000000000", // Max fee per gas
 				chainId: 80001,
 			});
 

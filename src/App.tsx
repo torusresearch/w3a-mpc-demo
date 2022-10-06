@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SafeEventEmitterProvider } from "@web3auth/base";
+import { SafeEventEmitterProvider } from "@web3auth-mpc/base";
 import "./App.css";
 import RPC from "./web3RPC"; // for using web3.js
 //@ts-ignore
@@ -20,7 +20,7 @@ import BN from "bn.js";
 const ec = new EC("secp256k1");
 
 const tssServerEndpoint =
-	"https://swaraj-test-coordinator-1.k8.authnetwork.dev/tss";
+	"https://load-test-1.k8.authnetwork.dev/tss";
 const tssImportURL =
 	"https://cloudflare-ipfs.com/ipfs/QmWxSMacBkunyAcKkjuDTU9yCady62n3VGW2gcUEcHg6Vh";
 
@@ -198,9 +198,11 @@ function App() {
 					);
 					await tss.default(tssImportURL);
 					client.precompute(tss as any);
-					await client.ready;
+					await client.ready();
 					clients.push({ client, allocated: false });
 				};
+
+				(window as any).generatePrecompute = generatePrecompute;
 
 				const openloginAdapter = new OpenloginAdapter({
 					loginSettings: {
