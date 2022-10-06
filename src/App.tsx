@@ -557,8 +557,8 @@ function App() {
 	);
 
 	const unloggedInView = (
-		<button onClick={login} className="card">
-			Login
+		<button disabled={!web3auth} onClick={login} className="card">
+			{ web3auth ? "Login" : "Loading..." }
 		</button>
 	);
 
