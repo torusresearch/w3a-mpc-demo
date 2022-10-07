@@ -90,10 +90,9 @@ function App() {
 			uiConsole("web3auth not initialized yet");
 			return;
 		}
-		console.log("Inside");
 		const web3authProvider = await web3auth.connect();
-		console.log("After");
 		setProvider(web3authProvider);
+		generatePrecompute(); // <-- So one precompute would be available to your users.
 	};
 
 	const getUserInfo = async () => {
