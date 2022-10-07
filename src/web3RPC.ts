@@ -85,10 +85,9 @@ export default class EthereumRpc {
 			const amount = web3.utils.toWei("0.001"); // Convert 1 ether to wei
 
 			// Submit transaction to the blockchain and wait for it to be mined
-			// console.log("FROM ADDRESS 0xc5552f4f84183209bC751850Ea0803f412e3C9Ce");
 			const receipt = await web3.eth.sendTransaction({
-				from: "0xc5552f4f84183209bC751850Ea0803f412e3C9Ce",
-				to: "0xc5552f4f84183209bC751850Ea0803f412e3C9Ce",
+				from: fromAddress,
+				to: destination,
 				value: amount,
 				chainId: 80001,
 			});
