@@ -3365,12 +3365,13 @@
     "@web3auth-mpc/base" "^2.1.9"
     "@web3auth-mpc/base-plugin" "^2.1.9"
 
-"@web3auth-mpc/ethereum-provider@^2.1.19":
-  version "2.1.19"
-  resolved "https://registry.yarnpkg.com/@web3auth-mpc/ethereum-provider/-/ethereum-provider-2.1.19.tgz#79c927548f7a869874964225a4f58c5932f02072"
-  integrity sha512-w0pikidSmo59KN6MPjGqHq4p8GuXsweQtjLLT+UepISG8Vkr3pIod3vmiUPuD6iKn88q59/SOOlkugWAfxn9kA==
+"@web3auth-mpc/ethereum-provider@^2.1.22":
+  version "2.1.22"
+  resolved "https://registry.yarnpkg.com/@web3auth-mpc/ethereum-provider/-/ethereum-provider-2.1.22.tgz#dde5da1fcb6609f73859d018e51e2b7d16585a86"
+  integrity sha512-vsWOlnTWqKCkzqE3Bhzv2rwOR9FRTRfxp//+bRKmCTpk2dibpcJmcPdBDfKV7FZpJ2AlqE6XnLGamTH/7IKP+g==
   dependencies:
     "@ethereumjs/common" "^3.0.0"
+    "@ethereumjs/rlp" "^4.0.0"
     "@ethereumjs/tx" "^4.0.0"
     "@ethereumjs/util" "^8.0.0"
     "@metamask/eth-sig-util" "^5.0.0"
@@ -3415,17 +3416,17 @@
     "@web3auth-mpc/base" "^2.1.9"
     "@web3auth-mpc/base-evm-adapter" "^2.1.9"
 
-"@web3auth-mpc/openlogin-adapter@^2.1.21":
-  version "2.1.21"
-  resolved "https://registry.yarnpkg.com/@web3auth-mpc/openlogin-adapter/-/openlogin-adapter-2.1.21.tgz#d6883bdbffacbacc756cc298a023d2899c85615e"
-  integrity sha512-4AfsiYAO9eXh8CGVIEn5mS+VYjIIJz3lciMhyBC8x1GG972wIpK1mkqkzWvDGTbcmyD0dQbihxOqcaWjF9O6NQ==
+"@web3auth-mpc/openlogin-adapter@^2.1.22":
+  version "2.1.22"
+  resolved "https://registry.yarnpkg.com/@web3auth-mpc/openlogin-adapter/-/openlogin-adapter-2.1.22.tgz#bb6809302cb8f563b138162a8303abbb66d61097"
+  integrity sha512-OWBurNa1sBZ7QciPUTgKfxJjTU7uZldbugZUrfNQ0LTR/o0DD7jDCADjJ4xxhoc7OBjHjzY7u3pAGPHBbaUbbQ==
   dependencies:
     "@toruslabs/http-helpers" "^3.2.0"
     "@toruslabs/openlogin-ed25519" "^2.0.0"
     "@toruslabs/openlogin-mpc" "^3.0.1-alpha.0"
     "@web3auth-mpc/base" "^2.1.9"
     "@web3auth-mpc/base-provider" "^2.1.9"
-    "@web3auth-mpc/ethereum-provider" "^2.1.19"
+    "@web3auth-mpc/ethereum-provider" "^2.1.22"
     "@web3auth-mpc/solana-provider" "^2.1.9"
     bn.js "^5.2.1"
     elliptic "^6.5.4"
@@ -11474,10 +11475,10 @@ toidentifier@1.0.1:
   resolved "https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.1.tgz"
   integrity sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==
 
-torus-mpc@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/torus-mpc/-/torus-mpc-0.0.4.tgz#a08dfb61f38fcfaf53fa020b714b1d4d77c5fc29"
-  integrity sha512-kJD/Q72SLI327ixrQtJezOWrUUEqyxkRya5WupjJF/bOMrDCKv69xdo4yKgZWg3l0ecMhciqqDQL8PPaaj+RAw==
+torus-mpc@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/torus-mpc/-/torus-mpc-0.0.6.tgz#87cecc355cbd98cc473f8e33122d2ff6b4296c86"
+  integrity sha512-R8CgTHdEuCUmGjj1jn8o/hz77hjI0wfcSrzuIOApl5RgCg5QRg58KImxbbZ5nEq4+8k+h1vejYAReff7edoRpg==
   dependencies:
     "@toruslabs/http-helpers" "^3.2.0"
     "@toruslabs/openlogin-utils" "^2.1.0"
