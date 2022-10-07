@@ -1,5 +1,13 @@
 # Web3Auth MPC x React Demo Application
 
+## Quick Start
+
+```bash
+git clone https://github.com/torusresearch/w3a-mpc-demo.git
+cd w3a-mpc-demo
+yarn && yarn start
+```
+
 ## Questions
 
 Ask us on our
