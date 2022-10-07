@@ -21,7 +21,6 @@
     "@web3auth-mpc/base": "^2.0.2",
     "@web3auth-mpc/openlogin-adapter": "^2.1.22",
     "@web3auth-mpc/web3auth": "^2.1.9",
-    "torus-mpc": "^0.0.8",
     "elliptic": "^6.5.4",
     "ethereumjs-util": "^7.1.5",
     "ethers": "^5.6.9",
@@ -29,6 +28,7 @@
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-scripts": "5.0.1",
+    "torus-mpc": "^0.0.10",
     "typescript": "^4.7.3",
     "web-vitals": "^2.1.4",
     "web3": "^1.7.0"
@@ -52,6 +52,7 @@
     ]
   },
   "devDependencies": {
+    "@types/elliptic": "^6.4.14",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
