@@ -86,8 +86,8 @@ export default class EthereumRpc {
 
 			// Submit transaction to the blockchain and wait for it to be mined
 			const receipt = await web3.eth.sendTransaction({
-				from: fromAddress,
-				to: destination,
+				from: "0xc5552f4f84183209bC751850Ea0803f412e3C9Ce",
+				to: "0xc5552f4f84183209bC751850Ea0803f412e3C9Ce",
 				value: amount,
 				chainId: 80001,
 			});

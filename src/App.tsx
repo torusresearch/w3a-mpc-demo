@@ -2,105 +2,20 @@ import { useEffect, useState } from "react";
 import { SafeEventEmitterProvider } from "@web3auth-mpc/base";
 import "./App.css";
 import RPC from "./web3RPC"; // for using web3.js
-//@ts-ignore
-import { ec as EC } from "elliptic";
+import {tssDataCallback, tssGetPublic, tssSign} from "./mpc";
 
 // MPC stuff
-import { Client } from "@toruslabs/tss-client";
-import * as tss from "@toruslabs/tss-lib";
 import { OpenloginAdapter } from "@web3auth-mpc/openlogin-adapter";
 import { Web3Auth } from "@web3auth-mpc/web3auth";
-import { io, Socket } from "socket.io-client";
 
-// helper libraries
-import { safeatob } from "@toruslabs/openlogin-utils";
-import { post } from "@toruslabs/http-helpers";
-import BN from "bn.js";
 
-const ec = new EC("secp256k1");
-
-const tssServerEndpoint =
-	"https://load-test-1.k8.authnetwork.dev/tss";
-const tssImportURL =
-	"https://cloudflare-ipfs.com/ipfs/QmWxSMacBkunyAcKkjuDTU9yCady62n3VGW2gcUEcHg6Vh";
-
-const clientId =
-	"BBP_6GOu3EJGGws9yd8wY_xFT0jZIWmiLMpqrEMx36jlM61K9XRnNLnnvEtGpF-RhXJDGMJjL-I-wTi13RcBBOo"; // get from https://dashboard.web3auth.io
+const clientId = "BBP_6GOu3EJGGws9yd8wY_xFT0jZIWmiLMpqrEMx36jlM61K9XRnNLnnvEtGpF-RhXJDGMJjL-I-wTi13RcBBOo"; // get from https://dashboard.web3auth.io
 
 function App() {
 	const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
 	const [provider, setProvider] = useState<SafeEventEmitterProvider | null>(
 		null,
 	);
-	// 	const init = async () => {
-	// 		try {
-	// 			// ETH_Ropsten
-	// 			const web3auth = new Web3Auth({
-	// 				clientId,
-	// 				chainConfig: {
-	// 					chainNamespace: CHAIN_NAMESPACES.EIP155,
-	// 					chainId: "0x3",
-	// 				},
-	// 			});
-
-	// 			setWeb3auth(web3auth);
-
-	// 			await web3auth.initModal();
-
-	// 			// To hide external wallet options
-	// await web3auth.initModal({
-	//   modalConfig: {
-	//     'torus-evm': {
-	//       label: 'Torus Wallet',
-	//       showOnModal: false,
-	//     },
-	//     metamask: {
-	//       label: 'Metamask',
-	//       showOnModal: false,
-	//     },
-	//     'wallet-connect-v1': {
-	//       label: 'Wallet Connect',
-	//       showOnModal: false,
-	//     },
-	//   },
-	// })
-
-	// 			// const torusPlugin = new TorusWalletConnectorPlugin({
-	// 			//   torusWalletOpts: {
-	// 			//     buttonPosition: 'bottom-left',
-	// 			//   },
-	// 			//   walletInitOptions: {
-	// 			//     whiteLabel: {
-	// 			//       theme: {isDark: true, colors: {primary: '#00a8ff'}},
-	// 			//       logoDark: 'https://web3auth.io/images/w3a-L-Favicon-1.svg',
-	// 			//       logoLight: 'https://web3auth.io/images/w3a-D-Favicon-1.svg',
-	// 			//     },
-	// 			//     useWalletConnect: true,
-	// 			//     enableLogging: true,
-	// 			//   },
-	// 			// })
-
-	// 			// torusPlugin.initWithProvider(provider_from_wagmi, userInfo)
-
-	// 			// torusPlugin.initiateTopup('moonpay', {
-	// 			//   selectedAddress: 'address',
-	// 			//   selectedCurrency: 'USD',
-	// 			//   fiatValue: 100,
-	// 			//   selectedCryptoCurrency: 'ETH',
-	// 			//   chainNetwork: 'mainnet',
-	// 			// })
-
-	// 			// await web3auth.addPlugin(torusPlugin)
-
-	// 			if (web3auth.provider) {
-	// 				setProvider(web3auth.provider);
-	// 			}
-	// 		} catch (error) {
-	// 			console.error(error);
-	// 		}
-	// 	};
-	// 	init();
-	// }, []);
 
 	useEffect(() => {
 		const initEthAuth = async () => {
@@ -114,95 +29,14 @@ function App() {
 					},
 					chainConfig: {
 						chainNamespace: "eip155",
-						chainId: "0x13881",
-						rpcTarget: "https://rpc.ankr.com/polygon_mumbai",
-						displayName: "Polygon Mainnet",
-						blockExplorer: "https://mumbai.polygonscan.com/",
-						ticker: "MATIC",
-						tickerName: "Matic",
+						chainId: "0x5",
+						rpcTarget: "https://rpc.ankr.com/eth_goerli",
+						displayName: "Goerli Testnet",
+						blockExplorer: "https://goerli.etherscan.io/",
+						ticker: "ETH",
+						tickerName: "Ethereum",
 					},
 				});
-
-				let getTSSData: () => Promise<{
-					tssShare: string;
-					signatures: string[];
-				}>;
-
-				const tssGetPublic = async () => {
-					if (!getTSSData) {
-						throw new Error("tssShare / sigs are undefined");
-					}
-					const { tssShare, signatures } = await getTSSData();
-					console.log(tssShare);
-					const pubKey = await getPublicKeyFromTSSShare(tssShare, signatures);
-					console.log("pubKey", Buffer.from(pubKey, "base64").toString("hex"));
-					return Buffer.from(pubKey, "base64");
-				};
-
-				const clients: { client: any; allocated: boolean }[] = [];
-
-				const tssSign = async (msgHash: Buffer) => {
-					generatePrecompute();
-					const finalHash = `0x${msgHash.toString("hex")}`;
-					console.log(finalHash);
-					let foundClient = null;
-
-					while (!foundClient) {
-						for (let i = 0; i < clients.length; i++) {
-							const client = clients[i];
-							if (!client.allocated) {
-								client.allocated = true;
-								foundClient = client;
-							}
-						}
-						await new Promise(resolve => setTimeout(resolve, 1000));
-					}
-					await foundClient.client;
-					await tss.default(tssImportURL);
-					const { r, s, recoveryParam } = await foundClient.client.sign(
-						tss as any,
-						Buffer.from(msgHash).toString("base64"),
-						true,
-						"",
-						"keccak256",
-					);
-					return {
-						v: recoveryParam + 27,
-						r: Buffer.from(r.toString("hex"), "hex"),
-						s: Buffer.from(s.toString("hex"), "hex"),
-					};
-				};
-
-				const generatePrecompute = async () => {
-					if (!getTSSData) {
-						throw new Error("tssShare and signatures are not defined");
-					}
-					// if (!provider) {
-					// 	throw new Error("not initialized");
-					// }
-					const { aggregateVerifier: verifierName, verifierId } =
-						await web3auth.getUserInfo();
-					if (!verifierName || !verifierId) {
-						throw new Error("not logged in, verifier or verifierId undefined");
-					}
-
-					console.log("WHAT IS THIS", verifierName, verifierId);
-					const { tssShare } = await getTSSData();
-					console.log("TSS Share: ", tssShare);
-					const pubKey = (await tssGetPublic()).toString("base64");
-					const client = await setupTSS(
-						tssShare,
-						pubKey,
-						verifierName,
-						verifierId,
-					);
-					await tss.default(tssImportURL);
-					client.precompute(tss as any);
-					await client.ready();
-					clients.push({ client, allocated: false });
-				};
-
-				(window as any).generatePrecompute = generatePrecompute;
 
 				const openloginAdapter = new OpenloginAdapter({
 					loginSettings: {
@@ -212,9 +46,7 @@ function App() {
 						useTSS: true,
 						tssGetPublic,
 						tssSign,
-						tssDataCallback: async tssDataReader => {
-							getTSSData = tssDataReader;
-						},
+						tssDataCallback,
 					},
 					adapterSettings: {
 						_iframeUrl: "https://mpc-beta.openlogin.com",
@@ -348,155 +180,6 @@ function App() {
 			el.innerHTML = JSON.stringify(args || {}, null, 2);
 		}
 	}
-
-	// MPC related functions
-	const getPublicKeyFromTSSShare = async (
-		tssShare: string,
-		signatures: string[],
-	): Promise<string> => {
-		// check if TSS is available
-		if (!tssShare || !Array.isArray(signatures) || signatures.length === 0) {
-			throw new Error("tssShare or signatures not available");
-		}
-		const parsedTSSShare = {
-			share: tssShare.split("-")[0].split(":")[1],
-			index: tssShare.split("-")[1].split(":")[1],
-		};
-
-		const parsedSignatures = signatures.map(s => JSON.parse(s));
-		const chosenSignature =
-			parsedSignatures[Math.floor(Math.random() * parsedSignatures.length)];
-		const { verifier_name: verifierName, verifier_id: verifierId } = JSON.parse(
-			safeatob(chosenSignature.data),
-		);
-		if (!verifierName || !verifierId) {
-			throw new Error("verifier_name and verifier_id must be specified");
-		}
-
-		const { share_pub_x: sharePubX, share_pub_y: sharePubY } = await post<{
-			// eslint-disable-next-line camelcase
-			share_pub_x: string;
-			// eslint-disable-next-line camelcase
-			share_pub_y: string;
-		}>(`${tssServerEndpoint}/getOrCreateTSSPub`, {
-			verifier_name: verifierName,
-			verifier_id: verifierId,
-		});
-
-		const getLagrangeCoeff = (partyIndexes: BN[], partyIndex: BN): BN => {
-			let upper = new BN(1);
-			let lower = new BN(1);
-			for (let i = 0; i < partyIndexes.length; i += 1) {
-				const otherPartyIndex = partyIndexes[i];
-				if (!partyIndex.eq(otherPartyIndex)) {
-					upper = upper.mul(otherPartyIndex.neg());
-					upper = upper.umod(ec.curve.n);
-					let temp = partyIndex.sub(otherPartyIndex);
-					temp = temp.umod(ec.curve.n);
-					lower = lower.mul(temp).umod(ec.curve.n);
-				}
-			}
-
-			const delta = upper.mul(lower.invm(ec.curve.n)).umod(ec.curve.n);
-			return delta;
-		};
-
-		// TODO: extend
-		const localIndex = 1;
-		const remoteIndex = 0;
-		const parties = [0, 1];
-		const pubKeyPoint = ec
-			.keyFromPublic({ x: sharePubX, y: sharePubY })
-			.getPublic()
-			.mul(
-				getLagrangeCoeff(
-					parties.map(p => new BN(p + 1)),
-					new BN(remoteIndex + 1),
-				),
-			)
-			.add(
-				ec
-					.keyFromPrivate(
-						Buffer.from(parsedTSSShare.share.padStart(64, "0"), "hex"),
-					)
-					.getPublic()
-					.mul(
-						getLagrangeCoeff(
-							parties.map(p => new BN(p + 1)),
-							new BN(localIndex + 1),
-						),
-					),
-			);
-		const pubKeyX = pubKeyPoint.getX().toString(16, 64);
-		const pubKeyY = pubKeyPoint.getY().toString(16, 64);
-		const pubKeyHex = `${pubKeyX}${pubKeyY}`;
-		const pubKey = Buffer.from(pubKeyHex, "hex").toString("base64");
-
-		return pubKey;
-	};
-
-	const createSockets = async (
-		wsEndpoints: (string | null | undefined)[],
-	): Promise<(Socket | null)[]> => {
-		const sockets = wsEndpoints.map(wsEndpoint => {
-			if (wsEndpoint === null || wsEndpoint === undefined) {
-				return null;
-			}
-			const origin = new URL(wsEndpoint).origin;
-			const path = `${new URL(wsEndpoint).pathname}/socket.io/`;
-			return io(origin, { path });
-		});
-
-		await new Promise(resolve => {
-			const timer = setInterval(() => {
-				for (let i = 0; i < sockets.length; i++) {
-					const socket = sockets[i];
-					if (socket === null) continue;
-					if (!socket.id) return;
-				}
-				clearInterval(timer);
-				resolve(true);
-			}, 500);
-		});
-
-		return sockets;
-	};
-
-	const setupTSS = async (
-		tssShare: string,
-		pubKey: string,
-		verifierName: string,
-		verifierId: string,
-	): Promise<any> => {
-		const endpoints = [tssServerEndpoint, null];
-		const wsEndpoints = [tssServerEndpoint, null];
-		const sockets = await createSockets(wsEndpoints);
-		const parsedTSSShare = {
-			share: tssShare.split("-")[0].split(":")[1],
-			index: tssShare.split("-")[1].split(":")[1],
-		};
-
-		const base64Share = Buffer.from(
-			parsedTSSShare.share.padStart(64, "0"),
-			"hex",
-		).toString("base64");
-		// TODO: extend
-		const localIndex = 1;
-		const remoteIndex = 0;
-		const parties = [0, 1];
-
-		return new Client(
-			`${verifierName}~${verifierId}:${Date.now()}`,
-			localIndex,
-			parties,
-			endpoints,
-			sockets,
-			base64Share,
-			pubKey,
-			true,
-			tssImportURL,
-		);
-	};
 
 	const loggedInView = (
 		<>
