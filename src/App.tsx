@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { SafeEventEmitterProvider } from "@web3auth-mpc/base";
 import "./App.css";
 import RPC from "./web3RPC"; // for using web3.js
-import {tssDataCallback, tssGetPublic, tssSign} from "torus-mpc";
 
 // MPC stuff
-import { OpenloginAdapter } from "@web3auth-mpc/openlogin-adapter";
 import { Web3Auth } from "@web3auth-mpc/web3auth";
+import { OpenloginAdapter } from "@web3auth-mpc/openlogin-adapter";
+import { tssDataCallback, tssGetPublic, tssSign, generatePrecompute } from "torus-mpc";
 
 
 const clientId = "BBP_6GOu3EJGGws9yd8wY_xFT0jZIWmiLMpqrEMx36jlM61K9XRnNLnnvEtGpF-RhXJDGMJjL-I-wTi13RcBBOo"; // get from https://dashboard.web3auth.io
@@ -55,10 +55,8 @@ function App() {
 						clientId,
 					},
 				});
-				(window as any).openloginAdapter = openloginAdapter;
 
 				web3auth.configureAdapter(openloginAdapter);
-				// this.subscribeAuthEvents(this.web3auth)
 				await web3auth.initModal({
 					modalConfig: {
 						"torus-evm": {
@@ -186,11 +184,15 @@ function App() {
 		<>
 			<div className="flex-container">
 				<div>
+					<button onClick={generatePrecompute} className="card">
+						Generate Precompute
+					</button>
+				</div>
+				<div>
 					<button onClick={getUserInfo} className="card">
 						Get User Info
 					</button>
 				</div>
-
 				<div>
 					<button onClick={getChainId} className="card">
 						Get Chain ID

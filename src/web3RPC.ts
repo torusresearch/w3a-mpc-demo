@@ -60,7 +60,7 @@ export default class EthereumRpc {
 			const fromAddress = (await web3.eth.getAccounts())[0];
 			const destination = fromAddress;
 
-			const amount = web3.utils.toWei("0.001"); // Convert 1 ether to wei
+			const amount = web3.utils.toWei("0.0001"); // Convert 1 ether to wei
 
 			const receipt = await web3.eth.signTransaction({
 				from: fromAddress,
