@@ -21,6 +21,7 @@
     "@web3auth-mpc/base": "^2.0.2",
     "@web3auth-mpc/openlogin-adapter": "^2.1.21",
     "@web3auth-mpc/web3auth": "^2.1.9",
+    "torus-mpc": "^0.0.4",
     "elliptic": "^6.5.4",
     "ethereumjs-util": "^7.1.5",
     "ethers": "^5.6.9",

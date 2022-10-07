@@ -11474,6 +11474,19 @@ toidentifier@1.0.1:
   resolved "https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.1.tgz"
   integrity sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==
 
+torus-mpc@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/torus-mpc/-/torus-mpc-0.0.4.tgz#a08dfb61f38fcfaf53fa020b714b1d4d77c5fc29"
+  integrity sha512-kJD/Q72SLI327ixrQtJezOWrUUEqyxkRya5WupjJF/bOMrDCKv69xdo4yKgZWg3l0ecMhciqqDQL8PPaaj+RAw==
+  dependencies:
+    "@toruslabs/http-helpers" "^3.2.0"
+    "@toruslabs/openlogin-utils" "^2.1.0"
+    "@toruslabs/tss-client" "^0.0.1"
+    "@toruslabs/tss-lib" "^0.0.1"
+    bn.js "^5.2.1"
+    elliptic "^6.5.4"
+    socket.io-client "^4.5.2"
+
 tough-cookie@^4.0.0:
   version "4.1.2"
   resolved "https://registry.npmjs.org/tough-cookie/-/tough-cookie-4.1.2.tgz"

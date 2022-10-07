@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { SafeEventEmitterProvider } from "@web3auth-mpc/base";
 import "./App.css";
 import RPC from "./web3RPC"; // for using web3.js
-import {tssDataCallback, tssGetPublic, tssSign} from "./mpc";
+import {tssDataCallback, tssGetPublic, tssSign} from "torus-mpc";
 
 // MPC stuff
 import { OpenloginAdapter } from "@web3auth-mpc/openlogin-adapter";
